@@ -8,15 +8,21 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 import {createLogger} from "../utils/logger";
 const logger = createLogger('attachmentUtils')
-const s3 = new XAWS.S3({signatureVersion: 'v4'})
+const s3 = new XAWS.S3({
+  signatureVersion: 'v4'
+})
 
-
-export async function getUploadUrl(todoId: string) {
+export function getUploadUrl(todoId: string) {
   logger.info(`getting upload URL for: ${todoId}`)
-
-  return s3.getSignedUrl('putObject', {
+  const params = {
     Bucket: process.env.ATTACHMENT_S3_BUCKET,
     Key: todoId,
     Expires: process.env.SIGNED_URL_EXPIRATION
-  })
+  }
+  logger.info(`Bucket: ${params.Bucket}`)
+  logger.info(`Key: ${params.Key}`)
+  logger.info(`Expires: ${params.Expires}`)
+  const url = s3.getSignedUrl('putObject', params)
+  logger.info(`got url: ${url}`)
+  return url
 }
