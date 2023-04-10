@@ -14,7 +14,7 @@ const logger = createLogger('TodosAccess')
 // TODO: Implement the dataLayer logic
 
 export class TodosAccess {
-
+    // XRAY is implemented down in the createDynamoDBClient below
     constructor(
         private readonly docClient: DocumentClient = createDynamoDBClient(),
         private readonly todosTable = process.env.TODOS_TABLE,
