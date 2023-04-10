@@ -63,10 +63,10 @@ export async function deleteTodo(todoId: string, userId: string) {
   }
 }
 
-export async function getSignedAttachmentUrl(imageId: string, userId: string) {
+export async function getSignedAttachmentUrl(todoId: string, userId: string) {
   try {
-    logger.info(`getting signed attachment url for user: ${userId}, image: ${imageId}`)
-    return await getUploadUrl(imageId)
+    logger.info(`getting signed attachment url for user: ${userId}, image: ${todoId}`)
+    return await getUploadUrl(todoId)
   } catch (error) {
     createError(error);
   }

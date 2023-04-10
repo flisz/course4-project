@@ -1,5 +1,7 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
+const AWSXRay = require('aws-xray-sdk')
+
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
@@ -21,7 +23,7 @@ export class TodosAccess {
     }
 
     async getAllTodos(userId: string): Promise<TodoItem[]> {
-        logger.info('Getting all groups')
+        logger.info('Getting all todos')
 
         const result = await this.docClient
             .query({
@@ -35,10 +37,20 @@ export class TodosAccess {
             .promise()
 
         const items = result.Items
+        logger.info(`items: ${items}`)
         return items as TodoItem[]
     }
 
     async createTodo(todoItem: TodoItem): Promise<TodoItem> {
+        logger.info(`Creating item: ${todoItem}`)
+        logger.info(`todoItem.userId: ${todoItem.userId}`)
+        logger.info(`todoItem.todoId: ${todoItem.todoId}`)
+        logger.info(`todoItem.createdAt: ${todoItem.createdAt}`)
+        logger.info(`todoItem.name: ${todoItem.name}`)
+        logger.info(`todoItem.dueDate: ${todoItem.dueDate}`)
+        logger.info(`todoItem.done: ${todoItem.done}`)
+        logger.info(`todoItem.attachmentUrl: ${todoItem.attachmentUrl}`)
+
         const params = {
             TableName: this.todosTable,
             Item: todoItem
@@ -51,6 +63,10 @@ export class TodosAccess {
         todoId: string,
         updateTodoData: TodoUpdate,
         userId: string): Promise<TodoUpdate> {
+        logger.info(`updating user: ${userId}, todo: ${todoId}`)
+
+
+
         const params = {
             TableName: this.todosTable,
             Key: {

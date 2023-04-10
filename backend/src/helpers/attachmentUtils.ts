@@ -1,5 +1,6 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
+const AWSXRay = require('aws-xray-sdk')
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -7,27 +8,15 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 import {createLogger} from "../utils/logger";
 const logger = createLogger('attachmentUtils')
+const s3 = new XAWS.S3({signatureVersion: 'v4'})
 
 
-export async function getUploadUrl(imageId: string) {
-  logger.info(`getting upload URL for: ${imageId}`)
-
-  let s3 = undefined
-  if (process.env.IS_OFFLINE) {
-    console.log('Creating a local DynamoDB instance')
-    s3 = new XAWS.DynamoDB.DocumentClient({
-      region: 'localhost',
-      endpoint: 'http://localhost:8000'
-    })
-  } else {
-    console.log('Not Offline!')
-    s3 = new XAWS.S3({signatureVersion: 'v4'})
-  }
-
+export async function getUploadUrl(todoId: string) {
+  logger.info(`getting upload URL for: ${todoId}`)
 
   return s3.getSignedUrl('putObject', {
     Bucket: process.env.ATTACHMENT_S3_BUCKET,
-    Key: imageId,
+    Key: todoId,
     Expires: process.env.SIGNED_URL_EXPIRATION
   })
 }
