@@ -16,7 +16,16 @@ export const handler = middy(
       logger.info('Creating new todo item')
 
       const userId = getUserId(event);
-      const newTodo = createTodo(todoData, userId)
+      const newTodo = await createTodo(todoData, userId)
+
+      logger.info(`returned todo: ${newTodo}`)
+      logger.info(`userId: ${newTodo.userId}`)
+      logger.info(`todoId: ${newTodo.todoId}`)
+      logger.info(`createdAt: ${newTodo.createdAt}`)
+      logger.info(`name: ${newTodo.name}`)
+      logger.info(`dueDate: ${newTodo.dueDate}`)
+      logger.info(`done: ${newTodo.done}`)
+      logger.info(`attachmentUrl: ${newTodo.attachmentUrl}`)
 
       return {
           statusCode: 201,
