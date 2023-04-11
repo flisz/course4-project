@@ -17,7 +17,7 @@ export function getUploadUrl(todoId: string) {
   const params = {
     Bucket: process.env.ATTACHMENT_S3_BUCKET,
     Key: todoId,
-    Expires: process.env.SIGNED_URL_EXPIRATION
+    Expires: parseInt(process.env.SIGNED_URL_EXPIRATION)
   }
   logger.info(`Bucket: ${params.Bucket}`)
   logger.info(`Key: ${params.Key}`)
