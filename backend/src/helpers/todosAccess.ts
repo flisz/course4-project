@@ -6,6 +6,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate';
+import {getUploadUrl} from "./attachmentUtils";
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -65,8 +66,6 @@ export class TodosAccess {
         userId: string): Promise<TodoUpdate> {
         logger.info(`updating user: ${userId}, todo: ${todoId}`)
 
-
-
         const params = {
             TableName: this.todosTable,
             Key: {
@@ -99,6 +98,23 @@ export class TodosAccess {
         }
         await this.docClient.delete(param).promise()
         return true
+    }
+
+    async generateUploadUrl(todoId, userId:string): Promise<string> {
+        const uploadUrl = getUploadUrl(todoId)
+        logger.info(`got url: ${uploadUrl}`)
+        await this.docClient.update({
+            TableName: this.todosTable,
+            Key: { userId, todoId },
+            UpdateExpression: "set attachmentUrl=:URL",
+            ExpressionAttributeValues: {
+              ":URL": uploadUrl.split("?")[0]
+          },
+          ReturnValues: "UPDATED_NEW"
+        })
+        .promise();
+
+        return uploadUrl;
     }
 };
 
